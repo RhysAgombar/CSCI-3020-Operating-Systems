@@ -24,4 +24,6 @@ extern bool player_exists(player *players, char *name);
 // Updates the score for that player given their name
 extern void update_score(player *players, char *name, int score);
 
+extern int player_count(player *players);
+
 #endif /* PLAYERS_H_ */
