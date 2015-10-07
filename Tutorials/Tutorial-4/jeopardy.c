@@ -29,7 +29,11 @@ int main(int argc, char *argv[])
 {
     // An array of 4 players, may need to be a pointer if you want it set dynamically
     player players[4];
-    
+    for (int i = 0; i < 4; i++){
+	printf("Enter the name of player %d. \n", i);
+	scanf("%s", players[i].name);
+	players[i].score = 0;
+    } 
     // Input buffer and and commands
     char buffer[BUFFER_LEN] = { 0 };
 
