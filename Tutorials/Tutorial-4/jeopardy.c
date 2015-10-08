@@ -20,10 +20,16 @@
 // Put global environment variables here
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
-void tokenize(char *input, char **tokens);
+void tokenize(char *input, char **tokens){
+
+
+}
 
 // Displays the game results for each player, their name and final score, ranked from first to last place
-void show_results(player *players);
+void show_results(player *players){
+
+
+}
 
 void generateTurnOrder(int *turns)
 {
@@ -37,7 +43,6 @@ void generateTurnOrder(int *turns)
 
         	if (j == 3){
         		turns[i] = r;
-        		printf("%d \n", turns[i]);
         		i++;
         	}
 		}
@@ -54,7 +59,7 @@ int main(int argc, char *argv[])
     // Input buffer and and commands
     char buffer[BUFFER_LEN] = { 0 };
 
-    // Display the game introduction and prompt for players names
+    // Display the game introduction and prompt for players namesc
     printf("Welcome to Jeopardy: CSCI-3020 Edition! \n \n");
     // initialize each of the players in the array
     for (int i = 0; i < 4; i++){ 
@@ -73,16 +78,34 @@ int main(int argc, char *argv[])
     for (int i = 0; i <= 3; i++){
     	printf("%d \n", turnOrder[i]);
     }
+    printf("---------------\n");
     
+    player selectedPlayer;
+    char *category = (char*)calloc(256,sizeof(char));
+    int value;
     // Perform an infinite loop getting command input from users until game ends
     while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
     {
+
+    	for(int i = 0; i < 4; i++){
+    		selectedPlayer = players[turnOrder[i] - 1];
+
+    		printf("%s's turn. \n", selectedPlayer.name);
+    		display_categories();
+    		printf("\nSelect a category: \n");
+    		scanf("%s", category);
+    		printf("\nSelect a value: \n");
+    		scanf("%d", &value);
+    	}
         // Call functions from the questions and players source files
 	
         // Execute the game until all questions are answered
        
         // Display the final results and exit
     }
+
+
+
     free(turnOrder);
     return EXIT_SUCCESS;
 }
