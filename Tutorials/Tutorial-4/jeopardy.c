@@ -96,6 +96,10 @@ int main(int argc, char *argv[])
     		scanf("%s", category);
     		printf("\nSelect a value: \n");
     		scanf("%d", &value);
+
+    		display_question(category, value);
+
+
     	}
         // Call functions from the questions and players source files
 	
