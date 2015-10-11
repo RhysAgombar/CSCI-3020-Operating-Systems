@@ -21,7 +21,23 @@
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
-//HAVE FUN, COLTON!
+    // Setup answer buffer and delim description
+    const char delim[2] = " ";
+    char answer[256] = {0};
+    
+    // Tokens the first 3 words to get past the "who is" or "what is"
+    tokens = strtok(input, delim);   
+    tokens = strtok(NULL, delim);
+    tokens = strtok(NULL, delim);
+    // Starts the loop to token the entire string, then pushes it into answer 
+	while(tokens != NULL){
+		strcat(answer, tokens);
+		tokens = strtok(NULL, delim);
+		if(tokens != NULL){
+			strcat(answer, " ");
+		}
+	} 
+	printf("%s\n", ansfwer);
 
 }
 
