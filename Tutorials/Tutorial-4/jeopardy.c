@@ -37,7 +37,7 @@ void tokenize(char *input, char **tokens){
 			strcat(answer, " ");
 		}
 	} 
-	printf("%s\n", ansfwer);
+	printf("%s\n", answer);
 
 }
 
