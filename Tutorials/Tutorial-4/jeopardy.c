@@ -111,8 +111,8 @@ int main(int argc, char *argv[])
     printf("---------------\n");
     
     player selectedPlayer;
-    char *category = (char*)calloc(256,sizeof(char)); // Setting up all the variables.
-    char *answer = (char*)calloc(256,sizeof(char));
+    char *category = (char*)calloc(BUFFER_LEN,sizeof(char)); // Setting up all the variables.
+    char *answer = (char*)calloc(BUFFER_LEN,sizeof(char));
     char **tok;
 
     int value, qCompleted;
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     }
 
 
-
+	free(questions);
     free(turnOrder);
     free(category);
     free(answer);
