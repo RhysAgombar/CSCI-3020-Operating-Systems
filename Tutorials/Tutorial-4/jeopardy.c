@@ -23,21 +23,22 @@
 void tokenize(char *input, char **tokens){
     // Setup answer buffer and delim description
     const char delim[2] = " ";
-    char answer[256] = {0};
+    char answer[BUFFER_LEN] = {0};
+    char *temp;
     
     // Tokens the first 3 words to get past the "who is" or "what is"
-    tokens = strtok(input, delim);   
-    tokens = strtok(NULL, delim);
-    tokens = strtok(NULL, delim);
+    temp = strtok(input, delim);   
+    temp = strtok(NULL, delim);
+    temp = strtok(NULL, delim);
     // Starts the loop to token the entire string, then pushes it into answer 
-	while(tokens != NULL){
-		strcat(answer, tokens);
-		tokens = strtok(NULL, delim);
-		if(tokens != NULL){
+	while(temp != NULL){
+		strcat(answer, temp);
+		temp = strtok(NULL, delim);
+		if(temp != NULL){
 			strcat(answer, " ");
 		}
 	} 
-	printf("%s\n", answer);
+	tokens = answer;
 
 }
 
