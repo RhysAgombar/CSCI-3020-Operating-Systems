@@ -38,7 +38,7 @@ void tokenize(char *input, char **tokens){
 			strcat(answer, " ");
 		}
 	} 
-	tokens = answer;
+	*tokens = answer;
 
 }
 
