@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     printf("Welcome to Jeopardy: CSCI-3020 Edition! \n \n");
     // initialize each of the players in the array
     for (int i = 0; i < 4; i++){ 
-        printf("Enter the name of player %d. \n", i); // Adds all the players/Initializes them.
+        printf("Enter the name of player %d. \n", i+1); // Adds all the players/Initializes them.
         scanf("%s", players[i].name);
         printf("\n");
         players[i].score = 0;
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     printf("Turn Order: \n");
     printf("--------------- \n");
     for (int i = 0; i <= 3; i++){
-    	printf("%d \n", turnOrder[i] + 1);
+    	printf("%d \n", turnOrder[i]);
     }
     printf("---------------\n");
     
