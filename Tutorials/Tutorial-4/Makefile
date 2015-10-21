@@ -1,17 +1,17 @@
 CC = gcc
 CFLAGS = -std=c99
-LFLAGS = 
-LIBS = 
+LFLAGS =
+LIBS =
 SOURCES = jeopardy.c questions.c players.c
 OBJECTS = $(subst .c,.o,$(SOURCES))
 EXE = jeopardy.exe
 .PHONY: clean help
 
 jeopardy.exe : $(OBJECTS)
-	$(CC) $(CFLAGS) $^ $(LIBS) -o $@ 
+	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 %.o : %.c
-	$(CC) $(CFLAGS) -c $< 
+	$(CC) $(CFLAGS) -c $<
 
 all : $(EXE)
 
