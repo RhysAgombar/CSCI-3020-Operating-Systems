@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     
     player selectedPlayer;
     char *category = (char*)calloc(BUFFER_LEN,sizeof(char)); // Setting up all the variables.
-    char *answer = (char*)calloc(BUFFER_LEN,sizeof(char));
+    char answer[256]; 
     char **tok;
 
     int value, qCompleted;
@@ -136,6 +136,8 @@ int main(int argc, char *argv[])
             if (!already_answered(category, value)){
                 display_question(category, value);
                 scanf("%s", answer);
+                printf("Test");
+                //printf("%s", answer);
                 tokenize(answer, tok); // TODO: I don't know what arguements you're going to need, Colton.
 
                 if(valid_answer(category, value, tok)){
