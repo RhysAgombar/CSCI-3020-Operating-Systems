@@ -1,12 +1,13 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 
-void *bellCurve(float *arg)
+void *bellCurve(void *arg)
 {
-    float curved = (float)arg * 1.5;
+    float curved = *((float *)arg) * 1.5;
 
-    printf("%d\n",curved);
+    printf("%f\n",curved);
 
     return NULL;
 }
@@ -23,28 +24,26 @@ int main(int argc, char *argv[]) {
     printf("Please input 5 student grades. \n");
 
     for(int i = 0; i < 5; i++){
-        grades[i] = (float*)malloc(sizeof(float)); 
-        scanf("%d", grades[i]);
+        grades[i] = (float*)malloc(sizeof(float));
+        scanf("%f", grades[i]);
     }
 
     printf("Curved Grades:");
 
-    for(int i = 0; i < 5; i++){
-        pthread_create(&pth[i], 0, bellCurve, (void *) grades[i]);
-    }
-    // Create the thread.
-    //pthread_create(&pth, 0, threadFunc, (void *) "Thread 1");
 
-    // wait for our thread to finish before continuing
+    // Create the threads
+    for(int i = 0; i < 5; i++){
+        pthread_create(&pth[i], 0, bellCurve, grades[i]);
+    }
+
+    // wait for our threads to finish before continuing
     for(int i = 0; i < 5; i++){
         pthread_join(pth[i], 0);
     }
 
-    free(grades);
-    free(pth);
+    for(int i = 0;i<5;i++){
+      free(grades[i]);
+    }
 
     return 0;
 }
-
-
-
