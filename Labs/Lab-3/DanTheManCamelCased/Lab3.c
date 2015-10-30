@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
-#include "utility.h"
 
-int** Garr;
+int Garr[9][9];
 
-void load(int* arr[9][9]){
+void load(int arr[9][9]){
   FILE *f;
   f = fopen("puzzle.txt","r");
 
@@ -33,18 +32,18 @@ void deallocate_mem(int*** arr, int* arr_data){
 
 int main (int argc, char *argv[]){
 
-  allocate_mem(&Garr,9,9);
+  int* arr_data = allocate_mem(&Garr,9,9);
 
   load(&Garr);
 
   for (int y = 0; y < 9; y++){
     for (int x = 0; x < 9; x++){
-      printf("before");
       printf("%d ",Garr[x][y]);
-      printf("after");
     }
     printf("\n");
   }
+
+  deallocate_mem(&Garr,&arr_data);
 
   return 0;
 }
