@@ -11,9 +11,9 @@ _Bool crvalid[9][9][10]; // values which are valid from 1-9
 
 void* rowsolve(void* arg){ // threaded row checker
   int row = (int) arg;
-  for(int i = 0;i<BORD;i++){
-    for(int j = 0;j<NUMS;j++){
-      crvalid[row][i][j];
+  for(int j = 0;i<BORD;i++){
+    for(int k = 0;j<NUMS;j++){
+      crvalid[row][j][k];
     }
   }
 }
