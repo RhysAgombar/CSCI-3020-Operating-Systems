@@ -9,6 +9,7 @@
 #define FIVE 5
 
 int* moving_sum[5];
+pthread_barrier_t barr;
 sem_t sem;
 
 struct numInd
@@ -19,11 +20,8 @@ struct numInd
 
 void *Factorial(void *arg)
 {
-    sem_wait(&sem);
     struct numInd str;
     str = *(struct numInd*)arg;
-
-    printf("Phase 1 - num = %d, ind = %d\n", str.num, str.index);
     
     int fact = 1;
     for(int i = str.num; i > 0; i--){
@@ -33,32 +31,31 @@ void *Factorial(void *arg)
         fact = fact * i;
     }
 
-    *moving_sum[str.index] = fact;
+    //*moving_sum[str.index] = fact;
 
     printf("Thread %d factorial = %d\n", str.index, fact);
 
-    sem_post(&sem);
-/*
+    int rc = pthread_barrier_wait(&barr);
+
     if (str.index > 0){
+
         while (1==1) {
-            //sem_wait(&sem);
-            printf("Thread %d is waiting. \n", str.index);
+            sem_wait(&sem);
+           // printf("Thread %d is Waiting. Prev value: %d, Curr value:%d\n", str.index, *moving_sum[str.index - 1], fact);
             if (*moving_sum[str.index - 1] > 0){
+                printf("Thread %d is executing. Prev value: %d, Curr value:%d\n", str.index, *moving_sum[str.index - 1], fact);
+                *moving_sum[str.index] = fact + *moving_sum[str.index - 1];
+                printf("Thread %d has executed. Curr value:%d\n", str.index, *moving_sum[str.index]);
+                sem_post(&sem);
                 break;
             }
-            //sem_post(&sem);
+            sem_post(&sem);
         }
 
-        *moving_sum[str.index] = *moving_sum[str.index] + *moving_sum[str.index - 1];
 
-        //for(int i = numInd.index; i > 0; i--){
-            //sem_wait(&sem);
-            //*moving_sum[numInd.index] = *moving_sum[numInd.index] + *moving_sum[numInd.index-1];
-            //sem_post(&sem);
-        //}
     }
-    */
-    //printf("%d\n", *moving_sum[numInd.index]);
+
+    *moving_sum[str.index] = fact;
 
     return 0;
 }
@@ -67,6 +64,9 @@ void *Factorial(void *arg)
 int main (int argc, char *argv[]){
 
     pthread_t *pth[FIVE];
+    struct numInd test[FIVE];
+
+    pthread_barrier_init(&barr,NULL,5);
 
     sem_init(&sem, 0, 1);
 
@@ -75,7 +75,7 @@ int main (int argc, char *argv[]){
         *moving_sum[i] = 0; 
     }
 
-        printf("Please input 5 numbers.\n");
+    printf("Please input 5 numbers.\n");
 
     for(int i = 0; i < 5; i++){
         scanf("%d", moving_sum[i]);
@@ -83,13 +83,11 @@ int main (int argc, char *argv[]){
     
     for(int i = 0;i<5;i++){
 
-        struct numInd test;
-        test.num = *moving_sum[i];
-        test.index = i;
+        test[i].num = *moving_sum[i];
+        *moving_sum[i] = 0; 
+        test[i].index = i;
 
-       // printf("Pre-Thread: num = %d, index = %d\n", test.num, test.index);
-
-        pthread_create(&pth[i],NULL,Factorial,(void *) &test);
+        pthread_create(&pth[i],NULL,Factorial,(void *) &test[i]);
     }
 
 
@@ -97,12 +95,14 @@ int main (int argc, char *argv[]){
         pthread_join(*pth[i],0);
     }
 
-    for(int i = 0; i < 5; i++){
-        pthread_join(&pth[i], 0);
+    printf("---moving_sum contents---\n");
+    for (int i = 0; i < 5; i++) {
+        printf("index %d = %d\n", i, *moving_sum[i]);
     }
 
     // Clean up
     sem_destroy(&sem);
+    pthread_barrier_destroy(&barr);
 
     for(int i = 0;i<5;i++){
       free(moving_sum[i]);
