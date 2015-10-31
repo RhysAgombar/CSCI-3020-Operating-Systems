@@ -31,9 +31,7 @@ void *Factorial(void *arg)
         fact = fact * i;
     }
 
-    //*moving_sum[str.index] = fact;
-
-    printf("Thread %d factorial = %d\n", str.index, fact);
+    //printf("Thread %d factorial = %d\n", str.index, fact);
 
     int rc = pthread_barrier_wait(&barr);
 
@@ -43,9 +41,9 @@ void *Factorial(void *arg)
             sem_wait(&sem);
            // printf("Thread %d is Waiting. Prev value: %d, Curr value:%d\n", str.index, *moving_sum[str.index - 1], fact);
             if (*moving_sum[str.index - 1] > 0){
-                printf("Thread %d is executing. Prev value: %d, Curr value:%d\n", str.index, *moving_sum[str.index - 1], fact);
+                //printf("Thread %d is executing. Prev value: %d, Curr value:%d\n", str.index, *moving_sum[str.index - 1], fact);
                 *moving_sum[str.index] = fact + *moving_sum[str.index - 1];
-                printf("Thread %d has executed. Curr value:%d\n", str.index, *moving_sum[str.index]);
+                //printf("Thread %d has executed. Curr value:%d\n", str.index, *moving_sum[str.index]);
                 sem_post(&sem);
                 break;
             }
@@ -53,9 +51,11 @@ void *Factorial(void *arg)
         }
 
 
-    }
+    } else {
 
-    *moving_sum[str.index] = fact;
+        *moving_sum[str.index] = fact;
+
+    }
 
     return 0;
 }
@@ -78,15 +78,11 @@ int main (int argc, char *argv[]){
     printf("Please input 5 numbers.\n");
 
     for(int i = 0; i < 5; i++){
-        scanf("%d", moving_sum[i]);
+        scanf("%d", &test[i].num);
+        test[i].index = i;
     }
     
     for(int i = 0;i<5;i++){
-
-        test[i].num = *moving_sum[i];
-        *moving_sum[i] = 0; 
-        test[i].index = i;
-
         pthread_create(&pth[i],NULL,Factorial,(void *) &test[i]);
     }
 
