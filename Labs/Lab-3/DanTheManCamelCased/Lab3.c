@@ -1,12 +1,26 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <pthread.h>
 
-int Garr[9][9];
+int* sudoku_board[9][9];
+_Bool* sudoku_solution[9][9][10];
 
-void load(int arr[9][9]){
+pthread_t t_col;
+pthread_t t_row;
+pthread_t t_box;
+
+
+
+void load(int* arr[][9]){
   FILE *f;
   f = fopen("puzzle.txt","r");
+
+  for(int y=0;y<9;y++){
+    for(int x=0;x<9;x++){
+      arr[x][y]=0;
+    }
+  }
 
   for (int y = 0; y < 9; y++){
     for (int x = 0; x < 9; x++){
@@ -14,36 +28,35 @@ void load(int arr[9][9]){
     }
   }
 
-}
-
-int* allocate_mem(int*** arr, int n, int m){
-  *arr = (int**)malloc(n * sizeof(int*));
-  int *arr_data = malloc(n*m*sizeof(int));
-  for(int i = 0; i < n; i++){
-    (*arr)[i] = arr_data + i * m;
+  for (int y = 0; y < 9; y++){
+    for (int x = 0; x < 9; x++){
+      int index=arr[x][y];
+      if(index!=0){
+        sudoku_solution[x][y][index]=1;
+      }else{
+        for(int z=0;z<10;z++){
+          sudoku_solution[x][y][z]=1;
+        }
+      }
+    }
   }
-  return arr_data;
 }
 
-void deallocate_mem(int*** arr, int* arr_data){
-  free(arr_data);
-  free(*arr);
+void check_pos(){
+  
 }
 
 int main (int argc, char *argv[]){
 
-  int* arr_data = allocate_mem(&Garr,9,9);
+  load(&sudoku_board);
 
-  load(&Garr);
+  printf("-----\n");
 
-  for (int y = 0; y < 9; y++){
-    for (int x = 0; x < 9; x++){
-      printf("%d ",Garr[x][y]);
+  for (int j = 0; j < 9; j++){
+    for (int k = 0; k < 9; k++){
+      printf("%d ",sudoku_board[k][j]);
     }
     printf("\n");
   }
-
-  deallocate_mem(&Garr,&arr_data);
-
   return 0;
 }
