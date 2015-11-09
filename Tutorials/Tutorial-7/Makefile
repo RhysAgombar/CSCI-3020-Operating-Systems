@@ -2,12 +2,12 @@ CC = clang
 CFLAGS = -Wall -Wextra -std=c99
 LFLAGS =
 LIBS =
-SOURCES = Q2.c
+SOURCES = Q5.c
 OBJECTS = $(subst .c,.o,$(SOURCES))
-EXE = Q2.exe
+EXE = Q5.exe
 .PHONY: clean help
 
-Q2.exe : $(OBJECTS)
+Q5.exe : $(OBJECTS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 %.o : %.c

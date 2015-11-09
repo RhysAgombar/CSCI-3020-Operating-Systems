@@ -23,9 +23,9 @@ int main(void){
     fprintf(stderr,"Fork failed.\n");
     status = -1;
   }else {
-    sleep(5);
+    sleep(1);
     kill(pid,SIGTSTP);
-    sleep(10);
+    sleep(2);
     kill(pid,SIGCONT);
     waitpid(pid,&status,0);
   }
