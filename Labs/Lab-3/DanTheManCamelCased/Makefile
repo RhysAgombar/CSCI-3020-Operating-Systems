@@ -1,7 +1,7 @@
 CC = clang
-CFLAGS = -Wall -std=c99
-LFLAGS = -lpthread
-LIBS = -lm
+CFLAGS = -Wall -std=c99 -lpthread
+LFLAGS =
+LIBS = 
 SOURCES = Lab3.c
 OBJECTS = $(subst .c,.o,$(SOURCES))
 EXE = Lab3.exe
