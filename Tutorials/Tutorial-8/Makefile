@@ -2,9 +2,9 @@ CC = gcc
 CFLAGS = -Wall -std=c99
 LFLAGS = -pthread
 LIBS = -lm
-SOURCES = solver.c utility.c
+SOURCES = q1.c queue.c bintree.c
 OBJECTS = $(subst .c,.o,$(SOURCES))
-EXE = solver.exe
+EXE = q1.exe
 .PHONY: clean help
 
 %.exe : $(OBJECTS)
