@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 typedef struct{
   char parent[256];
   char child[256];
@@ -14,3 +16,6 @@ typedef struct{
   node_t* last_left;
   node_t* last_right;
 }bintree;
+
+// functions
+extern void dfs(node_t* tree);
