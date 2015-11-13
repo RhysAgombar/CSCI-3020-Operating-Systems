@@ -1,10 +1,10 @@
-CC = gcc
+CC = clang
 CFLAGS = -Wall -std=c99
-LFLAGS = -pthread
-LIBS = -lm
-SOURCES = q2.c queue.c
+LFLAGS =
+LIBS =
+SOURCES = Q2.c queue.c
 OBJECTS = $(subst .c,.o,$(SOURCES))
-EXE = q1.exe
+EXE = Q2.exe
 .PHONY: clean help
 
 %.exe : $(OBJECTS)

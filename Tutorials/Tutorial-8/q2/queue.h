@@ -1,8 +1,13 @@
+#include <stdbool.h>
+
 typedef struct{
   char name[256];
   int priority;
   int pid;
+  int address;
+  int memory;
   int runtime;
+  bool suspended;
 }proc;
 
 typedef struct node_ {
