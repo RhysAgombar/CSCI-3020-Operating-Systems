@@ -75,18 +75,15 @@ int run_proc(proc* process){
       if(process->runtime>1&&process->priority>0){
         sleep(1);
         kill(pid,SIGTSTP);
-        //This sleep is to allow the output to be written to screen on time (completely cosmetic)
-        usleep(1);
+        waitpid(process->pid,&status,WUNTRACED);
         process->runtime--;
         process->suspended=true;
         return 1;
       }else{
         sleep(process->runtime);
         kill(pid,SIGINT);
-        waitpid(pid,&status,0);
+        waitpid(process->pid,&status,WUNTRACED);
         free_mem(process->address,process->memory);
-        //This sleep is to allow the output to be written to screen on time (completely cosmetic)
-        usleep(1);
         return 0;
       }
     }
@@ -98,8 +95,7 @@ int run_proc(proc* process){
       kill(process->pid,SIGCONT);
       sleep(1);
       kill(process->pid,SIGTSTP);
-      //This sleep is to allow the output to be written to screen on time (completely cosmetic)
-      usleep(1);
+      waitpid(process->pid,&status,WUNTRACED);
       process->runtime--;
       process->suspended=true;
       return 1;
@@ -107,10 +103,8 @@ int run_proc(proc* process){
       kill(process->pid,SIGCONT);
       sleep(process->runtime);
       kill(process->pid,SIGINT);
-      waitpid(pid,&status,0);
+      waitpid(process->pid,&status,WUNTRACED);
       free_mem(process->address,process->memory);
-      //This sleep is to allow the output to be written to screen on time (completely cosmetic)
-      usleep(1);
       return 0;
     }
   }
@@ -156,7 +150,6 @@ int main(void){
     //Create process
     proc new_proc = (proc){.name="",.priority=t_data[1],.pid=0,.address=0,.memory=t_data[2],.runtime=t_data[3],.suspended=false};
     strcpy(new_proc.name,t_name);
-    //printf("Creating Process Priority: %d using %d mem\n",new_proc.priority,new_proc.memory);
     if(new_proc.priority==0){
       push(priority,new_proc);
     }else{
@@ -179,14 +172,12 @@ int main(void){
   //Pop secondary
   proc* sec_proc = pop(secondary);
   while(sec_proc){
-    //printf("\n");
     if(!sec_proc->suspended){
       if(check_mem(&sec_proc->address,sec_proc->memory)){
         if(run_proc(sec_proc)){
           push(secondary,*sec_proc);
         }
       }else{
-        //printf("(Not enough memory): %s\n",sec_proc->name);
         push(secondary,*sec_proc);
       }
     }else{
