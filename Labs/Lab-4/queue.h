@@ -1,31 +1,26 @@
-/*
- * Host Dispatcher Shell Project for SOFE 3950U / CSCI 3020U: Operating Systems
- *
- * Copyright (C) 2015, <GROUP MEMBERS>
- * All rights reserved.
- * 
- */
-#ifndef QUEUE_H_
-#define QUEUE_H_
+#include <stdbool.h>
 
-#include "utility.h"
+typedef struct{
+  char name[256];
+  int priority;
+  int pid;
+  int address;
+  int memory;
+  int runtime;
+  bool suspended;
+}proc;
 
-// Your linked list structure for your queue
-// typedef ... 
-//  ...
-//  proc process;
-//  ...
-//} node_t; 
+typedef struct node_ {
+  proc process;
+  struct node_* next;
+}node;
 
-// Include your relevant FIFO queue functions declarations here they must start 
-// with the extern keyword such as in the following examples:
+typedef struct{
+  node* head;
+  node* tail;
+}queue;
 
-// Add a new process to the queue, returns the address of the next node added
-// to the linked list
-
-// extern node_t *push(node_t *tail, proc process);
-
-// extern node_t *pop(node_t *tail);
-
-
-#endif /* QUEUE_H_ */
+extern void push(queue* fifo,proc process);
+extern proc *pop(queue* fifo);
+extern proc *delete_name(queue* fifo,char* name);
+extern proc *delete_pid(queue* fifo,int pid);
