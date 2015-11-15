@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -std=c99
-LFLAGS = -pthread
+LFLAGS =
 LIBS = -lm
 SOURCES = q1.c bintree.c
 OBJECTS = $(subst .c,.o,$(SOURCES))
