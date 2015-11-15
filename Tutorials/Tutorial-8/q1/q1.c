@@ -9,12 +9,7 @@
 
 int main(){
   bintree* bt = (bintree*)malloc(sizeof(bintree));
-
-  node_t* head = (node_t*)malloc(sizeof(node_t));
-  head->left = NULL;
-  head->right = NULL;
-
-  bt->head = head;
+  bt->head = NULL;
 
   FILE* fl = fopen("processes_tree.txt","r");
   char reader[MAX] = {0};
@@ -60,8 +55,15 @@ int main(){
     strcpy(newproc->name,name);
     newproc->priority = priority;
     newproc->memory = memory;
-
-    add_node(bt->head,newproc);
+    if(bt->head == NULL){
+      node_t* head = (node_t*)malloc(sizeof(node_t));
+      head->process = *newproc;
+      head->left = NULL;
+      head->right = NULL;
+      bt->head = head;
+    }else{
+      add_node(bt->head,newproc);
+    }
   }
 
   fclose(fl);
