@@ -23,10 +23,10 @@ void add_node(node_t* tree, proc* process){
 }
 
 void create_node(node_t* tree,proc* process){
-    // check if there is anything on the left, if there isn't make something there
-    if(tree->left == NULL){
-      // create a new node on the left and set the current node's left to it
-      if(!added){
+  // check if there is anything on the left, if there isn't make something there
+  if(tree->left == NULL){
+    // create a new node on the left and set the current node's left to it
+    if(!added){
       node_t* left = (node_t*)malloc(sizeof(node_t));
       left->process = *process;
       left->left = NULL;
@@ -35,11 +35,11 @@ void create_node(node_t* tree,proc* process){
       fprintf(stdout,"new node created on left \n"); // debug
       added = 1; // we have added something, sotp adding
     }
-    }
-    // otherwise make the new node on the right
-    else if(tree->right == NULL){
-      // ditto on the right
-      if(!added){
+  }
+  // otherwise make the new node on the right
+  else if(tree->right == NULL){
+    // ditto on the right
+    if(!added){
       node_t* right = (node_t*)malloc(sizeof(node_t));
       right->process = *process;
       right->left = NULL;
@@ -48,14 +48,14 @@ void create_node(node_t* tree,proc* process){
       fprintf(stdout,"new node created on right \n");
       added = 1;
     }
-    }
-    // if there is stuff, keep iterating through
-    else{
-      if(tree->left!=NULL)
-      create_node(tree->left,process);
-      if(tree->right!=NULL)
-      create_node(tree->right,process);
-    }
+  }
+  // if there is stuff, keep iterating through
+  else{
+    if(tree->left!=NULL)
+    create_node(tree->left,process);
+    if(tree->right!=NULL)
+    create_node(tree->right,process);
+  }
 
 }
 
