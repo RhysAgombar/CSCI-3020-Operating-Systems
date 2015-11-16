@@ -8,18 +8,19 @@
 #define MAX 256
 
 int main(){
-  bintree* bt = (bintree*)malloc(sizeof(bintree));
-  bt->head = NULL;
+  node_t* curr;
   node_t* base = (node_t*)malloc(sizeof(node_t));
   base->left = NULL;
   base->right = NULL;
+
+
   proc* baseproc = (proc*)malloc(sizeof(baseproc));
   strcpy(baseproc->name,"NULL"); // initialize
   strcpy(baseproc->parent,"ignore"); // initialize
   baseproc->priority=0;
   baseproc->memory=0;
+
   base->process = *baseproc;
-  bt->head = base;
 
   proc* newproc = NULL;
 
@@ -68,14 +69,21 @@ int main(){
     newproc->priority = priority;
     newproc->memory = memory;
     printf("%s %s %d %d\n",newproc->parent,newproc->name,newproc->priority,newproc->memory);
-    add_node(bt->head,newproc);
+
+    curr = (node_t*)malloc(sizeof(node_t));
+    curr->left = NULL;
+    curr->right = NULL;
+
+    curr->process = *newproc;
+
+    add_node(base,curr);
   }
 
   fclose(fl);
 
-  print_tree(bt->head);
+  print_tree(base);
 
-  decon(bt->head);
+  decon(base);
 
   return 0;
 }

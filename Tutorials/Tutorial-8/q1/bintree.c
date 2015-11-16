@@ -21,13 +21,32 @@ void dfs(node_t* tree,char parent[256]){
   }
 }
 
-void add_node(node_t* tree, proc* process){
+
+
+void adder(node_t* tree,node_t* new){
+  if(!tree){
+    *tree = *new;
+    return;
+  }else if(strcmp(new->process.parent,tree->process.name)){
+    if(added == 0){
+      if(tree->left==NULL){
+        add_node(tree->left,new);
+        added = 1;
+      }else if(tree->right==NULL){
+        add_node(tree->right,new);
+        added = 1;
+      }
+    }
+  }
+}
+
+
+void add_node(node_t* tree, node_t* new){
   // function is split into two so that the added flag can work right
   added = 0;
-  //exist = 0;
-  //dfs(tree,process->name);
-  create_node(tree,process);
+  adder(tree,new);
 }
+
 
 void create_node(node_t* tree,proc* process){
 
