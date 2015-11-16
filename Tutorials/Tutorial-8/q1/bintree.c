@@ -23,76 +23,20 @@ void dfs(node_t* tree,char parent[256]){
 
 
 
-void adder(node_t* tree,node_t* new){
-  if(!tree){
-    *tree = *new;
+void adder(node_t** tree,node_t* new){
+  // if we are at a null node, then set the node here
+  if(tree==NULL && added == 0){
+    *tree = new;
+    added = 1;
     return;
-  }else if(strcmp(new->process.parent,tree->process.name)){
-    if(added == 0){
-      if(tree->left==NULL){
-        add_node(tree->left,new);
-        added = 1;
-      }else if(tree->right==NULL){
-        add_node(tree->right,new);
-        added = 1;
-      }
-    }
   }
+  // go through
+  adder(&(*tree)->left,new);
+  adder(&(*tree)->right,new);
 }
 
-
-void add_node(node_t* tree, node_t* new){
-  // function is split into two so that the added flag can work right
+void refresh(){
   added = 0;
-  adder(tree,new);
-}
-
-
-void create_node(node_t* tree,proc* process){
-
-  if(tree!=NULL && added == 0){
-    char partemp[256] = {0};
-    char currtemp[256] = {0};
-    strcpy(partemp,process->parent);
-    strcpy(currtemp,tree->process.name);
-
-    if(strcmp(currtemp,partemp)!=0){
-
-      if(tree->left!=NULL){
-        create_node(tree->left,process);
-      }else if(tree->right!=NULL){
-        create_node(tree->right,process);
-      }else if(!added){
-        node_t* newnode = (node_t*)malloc(sizeof(node_t));
-        newnode->process = *process;
-        newnode->left = NULL;
-        newnode->right = NULL;
-
-        if(tree->left==NULL)
-        tree->left = newnode;
-        else if(tree->right==NULL)
-        tree->right = newnode;
-        printf("add\n");
-        added = 1;
-      }
-
-    }else if (strcmp(currtemp,partemp)==0){
-      if(tree->left==NULL){
-        // create a new node on the left and set the current node's left to it
-        node_t* newnode = (node_t*)malloc(sizeof(node_t));
-        newnode->process = *process;
-        newnode->left = NULL;
-        newnode->right = NULL;
-        if(tree->left==NULL){
-          tree->left = newnode;
-        }else if(tree->right==NULL){
-          tree->right = newnode;
-        }
-        printf("add \n");
-        added = 1; // we have added something, sotp adding
-      }
-    }
-  }
 }
 
 void decon(node_t* tree){

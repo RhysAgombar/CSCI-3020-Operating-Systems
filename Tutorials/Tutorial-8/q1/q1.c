@@ -64,11 +64,11 @@ int main(){
     }
 
     newproc = (proc*)malloc(sizeof(newproc));
+    
     strcpy(newproc->parent,parent);
     strcpy(newproc->name,name);
     newproc->priority = priority;
     newproc->memory = memory;
-    printf("%s %s %d %d\n",newproc->parent,newproc->name,newproc->priority,newproc->memory);
 
     curr = (node_t*)malloc(sizeof(node_t));
     curr->left = NULL;
@@ -76,7 +76,9 @@ int main(){
 
     curr->process = *newproc;
 
-    add_node(base,curr);
+
+    adder(&base,curr);
+    refresh();
   }
 
   fclose(fl);

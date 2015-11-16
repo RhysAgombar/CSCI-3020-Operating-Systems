@@ -15,7 +15,7 @@ typedef struct node{
 
 // functions
 extern void dfs(node_t* tree,char parent[256]); // depth first search
-extern void add_node(node_t*,node_t* process); // initialize adding new node
-extern void create_node(node_t* tree,proc* process); // add a node to the tree
+extern void adder(node_t**,node_t* process); // initialize adding new node
+extern void refresh(); // set flags back
 extern void decon(node_t* tree); // delete the entire tree
 extern void print_tree(node_t* tree); // print the tree to screen
