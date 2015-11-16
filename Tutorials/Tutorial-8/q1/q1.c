@@ -10,6 +10,18 @@
 int main(){
   bintree* bt = (bintree*)malloc(sizeof(bintree));
   bt->head = NULL;
+  node_t* base = (node_t*)malloc(sizeof(node_t));
+  base->left = NULL;
+  base->right = NULL;
+  proc* baseproc = (proc*)malloc(sizeof(baseproc));
+  strcpy(baseproc->name,"NULL"); // initialize
+  strcpy(baseproc->parent,"ignore"); // initialize
+  baseproc->priority=0;
+  baseproc->memory=0;
+  base->process = *baseproc;
+  bt->head = base;
+
+  proc* newproc = NULL;
 
   FILE* fl = fopen("processes_tree.txt","r");
   char reader[MAX] = {0};
@@ -50,20 +62,13 @@ int main(){
       token = strtok(NULL,s);
     }
 
-    proc* newproc = (proc*)malloc(sizeof(newproc));
+    newproc = (proc*)malloc(sizeof(newproc));
     strcpy(newproc->parent,parent);
     strcpy(newproc->name,name);
     newproc->priority = priority;
     newproc->memory = memory;
-    if(bt->head == NULL){
-      node_t* head = (node_t*)malloc(sizeof(node_t));
-      head->process = *newproc;
-      head->left = NULL;
-      head->right = NULL;
-      bt->head = head;
-    }else{
-      add_node(bt->head,newproc);
-    }
+    printf("%s %s %d %d\n",newproc->parent,newproc->name,newproc->priority,newproc->memory);
+    add_node(bt->head,newproc);
   }
 
   fclose(fl);

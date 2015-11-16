@@ -20,7 +20,7 @@ typedef struct{
 }bintree;
 
 // functions
-extern void dfs(node_t* tree); // depth first search
+extern void dfs(node_t* tree,char parent[256]); // depth first search
 extern void add_node(node_t*,proc* process); // initialize adding new node
 extern void create_node(node_t* tree,proc* process); // add a node to the tree
 extern void decon(node_t* tree); // delete the entire tree
