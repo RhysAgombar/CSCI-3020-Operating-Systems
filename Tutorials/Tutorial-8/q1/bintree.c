@@ -25,14 +25,29 @@ void dfs(node_t* tree,char parent[256]){
 
 void adder(node_t** tree,node_t* new){
   // if we are at a null node, then set the node here
-  if(tree==NULL && added == 0){
-    *tree = new;
-    added = 1;
-    return;
+  if(!(*tree)){
+    if(!added){
+      *tree = new;
+      added = 1;
+      return;
+    }
+  }else{
+    // check if the parent matches, if not continue through tree
+    if(strcmp((*tree)->process.name,new->process.parent)==0){
+      if((*tree)->left==NULL){
+        adder(&(*tree)->left,new);
+      }else if((*tree)->right==NULL){
+        adder(&(*tree)->right,new);
+      }
+    }else{
+      if((*tree)->left!=NULL){
+        adder(&(*tree)->left,new);
+      }
+      if ((*tree)->right!=NULL){
+        adder(&(*tree)->right,new);
+      }
+    }
   }
-  // go through
-  adder(&(*tree)->left,new);
-  adder(&(*tree)->right,new);
 }
 
 void refresh(){

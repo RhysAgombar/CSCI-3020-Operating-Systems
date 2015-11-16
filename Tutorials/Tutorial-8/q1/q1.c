@@ -8,19 +8,19 @@
 #define MAX 256
 
 int main(){
-  node_t* curr;
+  //node_t* base = NULL; //
   node_t* base = (node_t*)malloc(sizeof(node_t));
-  base->left = NULL;
-  base->right = NULL;
+   base->left = NULL;
+   base->right = NULL;
 
 
-  proc* baseproc = (proc*)malloc(sizeof(baseproc));
-  strcpy(baseproc->name,"NULL"); // initialize
-  strcpy(baseproc->parent,"ignore"); // initialize
-  baseproc->priority=0;
-  baseproc->memory=0;
+   proc* baseproc = (proc*)malloc(sizeof(baseproc));
+   strcpy(baseproc->name,"NULL"); // initialize
+   strcpy(baseproc->parent,"ignore"); // initialize
+   baseproc->priority=0;
+   baseproc->memory=0;
 
-  base->process = *baseproc;
+   base->process = *baseproc;
 
   proc* newproc = NULL;
 
@@ -36,6 +36,7 @@ int main(){
   int memory = 0;
 
   while(fgets(reader,MAX,fl)!=NULL){
+    node_t* curr;
     memset(&parent[0],0,sizeof(parent));
     memset(&name[0],0,sizeof(name));
     memset(&intbuff[0],0,sizeof(intbuff));
@@ -63,8 +64,8 @@ int main(){
       token = strtok(NULL,s);
     }
 
-    newproc = (proc*)malloc(sizeof(newproc));
-    
+    newproc = (proc*)malloc(sizeof(proc));
+
     strcpy(newproc->parent,parent);
     strcpy(newproc->name,name);
     newproc->priority = priority;
@@ -76,7 +77,6 @@ int main(){
 
     curr->process = *newproc;
 
-
     adder(&base,curr);
     refresh();
   }
@@ -85,7 +85,7 @@ int main(){
 
   print_tree(base);
 
-  decon(base);
+  //decon(base);
 
   return 0;
 }
