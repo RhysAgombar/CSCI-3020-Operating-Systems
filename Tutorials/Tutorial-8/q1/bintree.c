@@ -10,7 +10,7 @@ _Bool exist = 0;
 
 // define functions here
 
-void dfs(node_t* tree,char parent[256]){
+void dfs(node* tree,char parent[256]){
   if(strcmp(tree->process.name,parent)==0){
     exist = 1;
   }else{
@@ -23,7 +23,7 @@ void dfs(node_t* tree,char parent[256]){
 
 
 
-void adder(node_t** tree,node_t* new){
+void adder(node** tree,node* new){
   // if we are at a null node, then set the node here
   if(tree==NULL && added == 0){
     *tree = new;
@@ -39,15 +39,15 @@ void refresh(){
   added = 0;
 }
 
-void decon(node_t* tree){
+void decon(node* tree){
   if(tree != NULL){
     decon(tree->left);
     decon(tree->right);
-    free(tree);
+    //free(tree);
   }
 }
 
-void print_tree(node_t* tree){
+void print_tree(node* tree){
 
   if(tree!=NULL){
     if(tree->left!=NULL){

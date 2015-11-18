@@ -1,8 +1,8 @@
 CC = clang
 CFLAGS = -Wall -std=c99
 LFLAGS =
-LIBS = -lm
-SOURCES = q1.c bintree.c
+LIBS =
+SOURCES = q1.c
 OBJECTS = $(subst .c,.o,$(SOURCES))
 EXE = q1.exe
 .PHONY: clean help
