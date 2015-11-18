@@ -5,9 +5,25 @@
 #include <string.h>
 #include "bintree.h"
 
-#define MAX 256
+#define MAX 1024
+
+node* curr;
+node* base;
 
 int main(){
+<<<<<<< HEAD
+  curr = (node*)malloc(sizeof(node));
+  base = (node*)malloc(sizeof(node));
+  base->left = NULL;
+  base->right = NULL;
+
+
+  proc baseproc;
+  strcpy(baseproc.name,"NULL"); // initialize
+  strcpy(baseproc.parent,"ignore"); // initialize
+  baseproc.priority=0;
+  baseproc.memory=0;
+=======
   //node_t* base = NULL; //
   node_t* base = (node_t*)malloc(sizeof(node_t));
    base->left = NULL;
@@ -21,14 +37,23 @@ int main(){
    baseproc->memory=0;
 
    base->process = *baseproc;
+>>>>>>> 359a6ef7389a29d5750b765b0c5b64390f4a26ac
 
-  proc* newproc = NULL;
+  base->process = baseproc;
 
-  FILE* fl = fopen("processes_tree.txt","r");
-  char reader[MAX] = {0};
-  const char s[3] = ", ";
+  FILE* fl;
+  fl = fopen("processes_tree.txt","r");
+  char reader[MAX];
+  const char* s = ", ";
   char *token;
 
+<<<<<<< HEAD
+  char parent[256];
+  char name[256];
+  char intbuff[256];
+  int priority;
+  int memory;
+=======
   char parent[MAX] = {0};
   char name[MAX] = {0};
   char intbuff[MAX] = {0};
@@ -42,13 +67,11 @@ int main(){
     memset(&intbuff[0],0,sizeof(intbuff));
     priority = 0;
     memory = 0;
+>>>>>>> 359a6ef7389a29d5750b765b0c5b64390f4a26ac
 
+  while(fgets(reader,MAX,fl)){
     token = strtok(reader,s);
     for(int i = 0;i<4;i++){
-      if(token!=NULL){
-        size_t ln = strlen(token)-1;
-        if(token[ln]=='\n')
-        token[ln] = '\0';
         if(i == 0){ // parent
           strcpy(parent,token);
         }else if(i==1){ // name
@@ -59,11 +82,20 @@ int main(){
         }else if(i==3){ // memory
           strcpy(intbuff,token);
           memory = atoi(intbuff);
-        }
       }
       token = strtok(NULL,s);
     }
 
+<<<<<<< HEAD
+    proc newproc = (proc){.parent="",.name="",.priority=priority,.memory=memory};
+    strcpy(newproc.parent,parent);
+    strcpy(newproc.name,name);
+
+    curr->process = newproc;
+
+    adder(base,curr);
+    //refresh();
+=======
     newproc = (proc*)malloc(sizeof(proc));
 
     strcpy(newproc->parent,parent);
@@ -79,11 +111,12 @@ int main(){
 
     adder(&base,curr);
     refresh();
+>>>>>>> 359a6ef7389a29d5750b765b0c5b64390f4a26ac
   }
 
-  fclose(fl);
+  //fclose(fl);
 
-  print_tree(base);
+  //print_tree(base);
 
   //decon(base);
 

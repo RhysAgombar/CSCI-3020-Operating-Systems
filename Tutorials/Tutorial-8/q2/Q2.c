@@ -125,7 +125,7 @@ int main(void){
   FILE *f;
   f = fopen("processes_q5.txt","r");
   char line[1024];
-  const char* s=", ";
+  const char* s = ", ";
   char *token;
 
   char* t_name[256];
