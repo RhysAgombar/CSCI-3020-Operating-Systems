@@ -36,28 +36,6 @@ proc *pop(queue* fifo){
   }
 }
 
-proc *delete_name(queue* fifo,char* name){
-  node* cur_node = fifo->head;
-  node* last_node = cur_node;
-  while(cur_node){
-    if(!strcmp(cur_node->process.name,name)){
-      if(fifo->tail == cur_node){
-        fifo->tail = last_node;
-        last_node->next=NULL;
-      }else if(fifo->head == cur_node){
-        fifo->head=cur_node->next;
-      }else{
-        last_node->next=cur_node->next;
-      }
-      return &cur_node->process;
-    }
-    last_node=cur_node;
-    cur_node=cur_node->next;
-
-  }
-  return NULL;
-}
-
 proc *delete_pid(queue* fifo,int pid){
   node* cur_node = fifo->head;
   node* last_node = cur_node;

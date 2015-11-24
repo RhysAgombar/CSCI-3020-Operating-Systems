@@ -3,16 +3,24 @@
  *
  * Copyright (C) 2015, <GROUP MEMBERS>
  * All rights reserved.
- * 
+ *
  */
 #ifndef HOSTD_H_
 #define HOSTD_H_
 
-// Include any relevant data structures here thay may be needed
+#include "queue.h"
+#include "utility.h"
 
-// Include any relevant functions declarations here they must start with the 
+queue* q_dispatch;
+
+queue* q_real;
+queue* q_1;
+queue* q_2;
+queue* q_3;
+resources res_avail;
+
+// Include any relevant functions declarations here they must start with the
 // extern keyword such as in the following example:
 // extern void print_process(proc process);
-
 
 #endif /* HOSTD_H_ */

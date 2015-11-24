@@ -1,14 +1,8 @@
-#include <stdbool.h>
+#ifndef QUEUE_H_
+#define QUEUE_H_
 
-typedef struct{
-  char name[256];
-  int priority;
-  int pid;
-  int address;
-  int memory;
-  int runtime;
-  bool suspended;
-}proc;
+#include <stdbool.h>
+#include "utility.h"
 
 typedef struct node_ {
   proc process;
@@ -22,5 +16,7 @@ typedef struct{
 
 extern void push(queue* fifo,proc process);
 extern proc *pop(queue* fifo);
-extern proc *delete_name(queue* fifo,char* name);
+//extern proc *delete_name(queue* fifo,char* name);
 extern proc *delete_pid(queue* fifo,int pid);
+
+#endif
