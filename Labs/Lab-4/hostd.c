@@ -21,7 +21,6 @@
 
 // Put global environment variables here
 
-
 // Define functions declared in hostd.h here
 
 int main(int argc, char *argv[])
@@ -95,7 +94,6 @@ int main(int argc, char *argv[])
     tick++;
     if(tick>20){break;}
   }
-
 
 
   // Allocate the resources for each process before it's executed
