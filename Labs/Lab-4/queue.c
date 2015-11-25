@@ -9,6 +9,16 @@
 #include <sys/wait.h>
 #include "queue.h"
 
+int q_size(queue* fifo){
+  int size=0;
+  node* cur = fifo->head;
+  while(cur){
+    size++;
+    cur = cur->next;
+  }
+  return size;
+}
+
 void push(queue* fifo,proc process){
   node* temp = (node*)malloc(sizeof(node));
   temp->process=process;
@@ -34,25 +44,4 @@ proc *pop(queue* fifo){
   }else{
     return NULL;
   }
-}
-
-proc *delete_pid(queue* fifo,int pid){
-  node* cur_node = fifo->head;
-  node* last_node = cur_node;
-  while(cur_node){
-    if(cur_node->process.pid==pid){
-      if(fifo->tail == cur_node){
-        fifo->tail = last_node;
-        last_node->next=NULL;
-      }else if(fifo->head == cur_node){
-        fifo->head=cur_node->next;
-      }else{
-        last_node->next=cur_node->next;
-      }
-      return &cur_node->process;
-    }
-    last_node=cur_node;
-    cur_node=cur_node->next;
-  }
-  return NULL;
 }

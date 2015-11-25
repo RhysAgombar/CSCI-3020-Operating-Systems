@@ -1,7 +1,7 @@
 /*
 * Host Dispatcher Shell Project for SOFE 3950U / CSCI 3020U: Operating Systems
 *
-* Copyright (C) 2015, <GROUP MEMBERS>
+* Copyright (C) 2015, <Dan Hope, Santiago Bonada, Colton Howe, Rhys Agombar>
 * All rights reserved.
 *
 */
@@ -17,14 +17,7 @@
 #include "utility.h"
 #include "hostd.h"
 
-// Put macros or constants here using #define
-
-// Put global environment variables here
-
-// Define functions declared in hostd.h here
-
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
   //Init queues
   q_dispatch = (queue*)malloc(sizeof(queue*));
   q_dispatch->head=NULL;
@@ -46,6 +39,7 @@ int main(int argc, char *argv[])
   q_3->head=NULL;
   q_3->tail=NULL;
 
+
   //Init resources
   for(int i=0;i<PRINTERS;i++){res_avail.printers[i]=0;}
   for(int i=0;i<SCANNERS;i++){res_avail.scanners[i]=0;}
@@ -54,12 +48,11 @@ int main(int argc, char *argv[])
   for(int i=0;i<MEMORY;i++){res_avail.memory[i]=0;}
 
   // Load the dispatchlist adds to queue as well
-  load_dispatch("dispatchlist");
+  load_dispatch(argv[1]);
 
   int tick =0;
   //Start dispatching
   while(true){
-    printf("Tick: %d\n",tick);
     //check dispatch list for processes that have arrived
     node* dispatch_node = q_dispatch->head;
     while(dispatch_node){
@@ -84,25 +77,99 @@ int main(int argc, char *argv[])
     }
 
     //Run processes
-    proc* real;
-    if(real = pop(q_real)){
-      run_proc(real,1);
-    }else{
+    proc* get_proc;
+    bool find_proc = true;
+    int count;
 
+    //Real Time Queue
+    count = q_size(q_real);
+    //loop through queue if there is something in queue and no job has been found
+    while(find_proc&&count>0){
+      get_proc = pop(q_real);
+      //check if process can be allocated
+      if(alloc_resources(&res_avail,get_proc)){
+        //run
+        run_proc(get_proc);
+        find_proc=false;
+      }else{
+        push(q_real,*get_proc);
+        count--;
+      }
     }
 
+    //1st Queue
+    count = q_size(q_1);
+    //loop through queue if there is something in queue and no job has been found
+    while(find_proc&&count>1){
+      get_proc = pop(q_1);
+      //Check if process can be allocated
+      if(alloc_resources(&res_avail,get_proc)){
+        //run if not completed during run push to next queue
+        if(run_proc(get_proc))
+        push(q_2,*get_proc);
+        find_proc=false;
+      }else{
+        //if resources not available push back onto queue
+        push(q_1,*get_proc);
+        count--;
+      }
+    }
+
+    //2nd Queue
+    count = q_size(q_2);
+    //loop through queue if there is something in queue and no job has been found
+    while(find_proc&&count>0){
+      get_proc = pop(q_2);
+      //if process is a new process
+      if(!get_proc->suspended){
+        //check if it can be allocated
+        if(alloc_resources(&res_avail,get_proc)){
+          //run if not completed during run push to next queue
+          if(run_proc(get_proc))
+          push(q_3,*get_proc);
+          find_proc=false;
+        }else{
+          //if resources not available push back onto queue
+          push(q_2,*get_proc);
+          count--;
+        }
+      }else{
+        //if processes has already been allocated just run it some more
+        if(run_proc(get_proc))
+        push(q_3,*get_proc);
+        find_proc=false;
+      }
+    }
+
+    //3rd Qeue
+    count = q_size(q_3);
+    while(find_proc&&count>0){
+      get_proc = pop(q_3);
+      if(!get_proc->suspended){
+        if(alloc_resources(&res_avail,get_proc)){
+          if(run_proc(get_proc))
+          push(q_3,*get_proc);
+          find_proc=false;
+        }else{
+          push(q_3,*get_proc);
+          count--;
+        }
+      }else{
+        if(run_proc(get_proc))
+        push(q_3,*get_proc);
+        find_proc=false;
+      }
+    }
+
+    //if no process was able to be run either system is hung or there are no jobs left
+    if(find_proc){
+      printf("TERMINATING: Could not find anymore processes\n");
+      break;
+    }
+
+    //increase tick count on dispatcher
     tick++;
-    if(tick>20){break;}
   }
-
-
-  // Allocate the resources for each process before it's executed
-
-  // Execute the process binary using fork and exec
-
-  // Perform the appropriate signal handling / resource allocation and de-alloaction
-
-  // Repeat until all processes have been executed, all queues are empty
 
   return EXIT_SUCCESS;
 }
