@@ -1,0 +1,2 @@
+you guys need to do some thread locking. Otherwise you're going to get bad race conditions.
+That's why we have semaphore.h included right. RIGHT?
