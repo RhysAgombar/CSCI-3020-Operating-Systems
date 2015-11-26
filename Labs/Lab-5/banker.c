@@ -14,12 +14,13 @@
 
 // Put any other macros or constants here using #define
 // May be any values >= 0
-#define NUM_CUSTOMERS 5
+#define NUM_CUSTOMERS 2
 #define NUM_RESOURCES 3
 
 // Put global environment variables here
 // Available amount of each resource
 int available[NUM_RESOURCES];
+int total[NUM_RESOURCES];
 
 // Maximum demand of each customer
 int maximum[NUM_CUSTOMERS][NUM_RESOURCES];
@@ -31,9 +32,54 @@ int allocation[NUM_CUSTOMERS][NUM_RESOURCES];
 int need[NUM_CUSTOMERS][NUM_RESOURCES];
 
 
+bool check_safety(int n_customer, int request[])
+{
+	bool finish[NUM_CUSTOMERS];
+	int work[NUM_RESOURCES];
+
+	for (int i = 0; i < NUM_RESOURCES; i++){
+		finish[i] = false;
+		work[i] = available[i];
+	}
+
+	for (int i = 0; i < NUM_RESOURCES; i++){
+		//if(finish[i] == false && need[n_customer][i] <= work[i]){
+
+		//}
+	}
+
+
+}
+
 // Define functions declared in banker.h here
 bool request_res(int n_customer, int request[])
 {
+	bool result = false;
+
+	for (int i = 0; i < NUM_RESOURCES; i++){
+		if (request[i] > need[n_customer][i]){
+			break;
+		} else if (request[i] > available){
+			break;
+		} else {
+			int tempAvail[NUM_RESOURCES];
+			for (int i = 0; i < NUM_RESOURCES; i++){
+				tempAvail[i] = available[i] - request[i];
+			}
+
+			bool safe = check_safety(n_customer, tempAvail);
+
+			if( safe == true){
+				for (int i = 0; i < NUM_RESOURCES; i++){
+					available[i] = available[i] - request[i]; // critical Section
+					allocation[n_customer][i] = allocation[n_customer][i] + request[i];
+					need[n_customer][i] = need[n_customer][i] - request[i];
+				}
+			}
+
+
+		}
+	}
 
 }
 
@@ -45,11 +91,11 @@ bool release_res(int n_customer)
 
 void procCust(int n_customer)
 {
-	int request[3] = { 0 };
+	int request[NUM_RESOURCES] = { 0 };
 
 	for (int i = 0; i < 10; i++){ // Go through this song and dance 10 times
 
-		for (int j = 0; j < 3; j++){ // Generate the initial needs
+		for (int j = 0; j < NUM_RESOURCES; j++){ // Generate the initial needs
 			int val = rand() % 10;
 			need[n_customer][j] = val;
 			allocation[n_customer][j] = 0;
@@ -61,13 +107,13 @@ void procCust(int n_customer)
 
 		while(1 == 1){
 
-			for (int j = 0; j < 3; j++){ // Start generating the requests.
-				request[j] = rand() % 10;
+			for (int j = 0; j < NUM_RESOURCES; j++){ // Start generating the requests.
+				request[j] = rand() % total[j]; // Can never request more than the max amount of resources we have
 			}
 
 			bool result = request_res(n_customer, request);	
 
-			if(need[n_customer][0] == 0 && need[n_customer][1] == 0 && need[n_customer][2] == 0){
+			if(need[n_customer][0] - allocation[n_customer][0] == 0 && need[n_customer][1] - allocation[n_customer][1] == 0 && need[n_customer][2] - allocation[n_customer][2] == 0){ // This is gonna drive dan crazy I can tell.
 				break;
 			}
 
@@ -104,6 +150,9 @@ int main(int argc, char *argv[])
     	available[0] = atoi(argv[1]);
     	available[1] = atoi(argv[2]);
     	available[2] = atoi(argv[3]);
+    	total[0] = atoi(argv[1]);
+    	total[1] = atoi(argv[2]);
+    	total[2] = atoi(argv[3]);
 
     }
 
