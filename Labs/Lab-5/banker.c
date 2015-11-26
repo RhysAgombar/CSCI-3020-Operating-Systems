@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <time.h>
 #include "banker.h"
 
 // Put any other macros or constants here using #define
@@ -41,11 +42,55 @@ bool check_safety(int n_customer, int request[])
 // Define functions declared in banker.h here
 bool request_res(int n_customer, int request[])
 {
-	bool result = false;
-	int tempAvail[NUM_RESOURCES];
-	
-	printf("Customer %d request: %d %d %d\nAvailable: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2],available[0] ,available[1] ,available[2]);
+	bool result = false, flag = true;
+	int tempAvail[NUM_RESOURCES] = {0};
 
+	
+	//printf("Customer %d request: %d %d %d - Available: %d %d %d - Need: %d %d %d\n", n_customer, request[0], request[1], request[2], available[0] ,available[1] ,available[2], need[n_customer][0], need[n_customer][1], need[n_customer][2]);
+
+	for (int i = 0; i < NUM_RESOURCES; i++){
+		if (request[i] > need[n_customer][i]){
+			flag = false;
+			return result;
+		}
+		if (request[i] > available[i]){
+			flag = false;
+			return result;
+		}
+		if( i == NUM_RESOURCES - 1){
+			printf("Flag hit\n");
+			flag = true;
+		}
+	}
+
+	if (flag == true){
+		result = true;
+		for (int i = 0; i < NUM_RESOURCES; i++){
+			tempAvail[i] = available[i] - request[i];
+		}
+
+		//printf("Avail: %d %d %d - Request: %d %d %d - tempAvail %d %d %d\n", available[0], available[1], available[2], request[0], request[1], request[2], tempAvail[0], tempAvail[1], tempAvail[2]);
+	
+		bool safe = check_safety(n_customer, tempAvail);
+
+		if( safe == true){
+			for (int i = 0; i < NUM_RESOURCES; i++){
+				available[i] = available[i] - request[i]; // critical Section
+				allocation[n_customer][i] = allocation[n_customer][i] + request[i];
+				need[n_customer][i] = need[n_customer][i] - request[i];
+			}
+			result = true;
+			printf("Customer %d request: %d %d %d - Available: %d %d %d - Need: %d %d %d\n", n_customer, request[0], request[1], request[2], available[0] ,available[1] ,available[2], need[n_customer][0], need[n_customer][1], need[n_customer][2]);
+
+		} else {
+			safe = false;
+			result = false;
+		}
+
+	}
+
+
+/*
 	for (int i = 0; i < NUM_RESOURCES; i++){
 		if (request[i] > need[n_customer][i]){
 			result = false;
@@ -58,6 +103,9 @@ bool request_res(int n_customer, int request[])
 			tempAvail[i] = available[i] - request[i];
 		}
 	}
+
+	printf("Customer %d request: %d %d %d\nAvailable: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2],tempAvail[0] ,tempAvail[1] ,tempAvail[2]);
+
 
 	if (result == true){
 			bool safe = check_safety(n_customer, tempAvail);
@@ -75,9 +123,8 @@ bool request_res(int n_customer, int request[])
 			}
 
 		}
-
-	printf("Customer %d request: %d %d %d\nAvailable: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2],available[0] ,available[1] ,available[2]);
-
+*/
+	
 	return result;
 
 }
@@ -85,12 +132,18 @@ bool request_res(int n_customer, int request[])
 // Release resources, returns true if successful
 bool release_res(int n_customer)
 {
+	for (int i = 0; i < NUM_RESOURCES; i++){
+		available[i] = available[i] + allocation[n_customer][i];
+		allocation[n_customer][i] = 0;
+ 	}
 
+ 	return true;
 }
 
 void procCust(int n_customer)
 {
 	int request[NUM_RESOURCES] = { 0 };
+	srand(time(NULL));
 
 	for (int i = 0; i < 10; i++){ // Go through this song and dance 10 times
 
@@ -101,44 +154,40 @@ void procCust(int n_customer)
 			maximum[n_customer][j] = val;
 		}
 
-		//printf("Customer %d request: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2]);
-				
+		printf("-------------------\n");
+		printf("Customer %d Initial request: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2]);
 
 		while(1 == 1){
-			sleep(1);
+			//sleep(1);
 
-			for (int j = 0; j < NUM_RESOURCES; j++){ // Start generating the requests.
-				request[j] = rand() % total[j]; // Can never request more than the max amount of resources we have
+			while (1 == 1){
+				for (int j = 0; j < NUM_RESOURCES; j++){ // Start generating the requests.
+					request[j] = rand() % total[j]; // Can never request more than the max amount of resources we have
+				}
+				if (!(request[0] == 0 && request[1] == 0 && request[2] == 0)){
+					break;
+				}
 			}
+
 
 			bool result = request_res(n_customer, request);	
 
+			//printf("Req: %d %d %d\n", request[0], request[1], request[2]);
+			/*
 			if(result == true){
-				printf("Customer %d request accepted. Allocated resources: %d %d %d\n",  n_customer, request[0], request[1], request[2]);
+				//printf("Customer %d request accepted. Allocated resources: %d %d %d\n",  n_customer, request[0], request[1], request[2]);
 			} else if (result == false){
-				printf("Customer %d request denied. Requested (but denied) resources: %d %d %d\n",  n_customer, request[0], request[1], request[2]);
+				//printf("Customer %d request denied. Requested (but denied) resources: %d %d %d\n",  n_customer, request[0], request[1], request[2]);
 			}
-
-			if(need[n_customer][0] - allocation[n_customer][0] == 0 && need[n_customer][1] - allocation[n_customer][1] == 0 && need[n_customer][2] - allocation[n_customer][2] == 0){ // This is gonna drive dan crazy I can tell.
+*/
+			if(need[n_customer][0] == 0 && need[n_customer][1] == 0 && need[n_customer][2] == 0){ // This is gonna drive dan crazy I can tell.
 				break;
 			}
 
 		}
 
 		release_res(n_customer);
-
-
-
-
-
-
-
-
-
-
-
-
-
+		printf("-------------------\n");
 
 	}
 
