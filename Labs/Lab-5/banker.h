@@ -17,6 +17,6 @@
 extern bool request_res(int n_customer, int request[]);
 
 // Release resources, returns true if successful
-extern bool release_res(int n_customer, int release[]);
+extern bool release_res(int n_customer);
 
 #endif /* BANKER_H_ */
