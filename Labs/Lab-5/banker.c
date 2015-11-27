@@ -18,6 +18,8 @@
 #define NUM_CUSTOMERS 1
 #define NUM_RESOURCES 3
 
+pthread_mutex_t mutex;
+
 // Put global environment variables here
 // Available amount of each resource
 int available[NUM_RESOURCES];
@@ -35,7 +37,48 @@ int need[NUM_CUSTOMERS][NUM_RESOURCES];
 
 bool check_safety(int n_customer, int request[])
 {
-	return true;
+
+	bool finish[NUM_CUSTOMERS];
+	int work[NUM_RESOURCES];
+	//Initial allocation of the work
+	for (int i = 0; i < NUM_RESOURCES; i++){
+		work[i] = request[i];
+	}
+
+	//Initial allocation of which customers are safe
+	for(int i = 0; i < NUM_CUSTOMERS; i++){
+		finish[i] = false;
+	}
+
+	/*For each customer, go through all of the resources that customer needs. If the customer hasn't already been set to safe,
+	and the customer's need's are lower or equal to the amount of work that needs to be done, then set the customer to safe.
+	*/
+	for(int i = 0; i < NUM_CUSTOMERS; i++){
+		//printf("%d",finish[i]);
+	}
+	//printf("\n");
+	for (int j = 0; j < NUM_CUSTOMERS; j++){
+		for (int i = 0; i < NUM_RESOURCES; i++){
+			if(finish[j] == false && need[j][i] <= work[i]){
+				work[i] = work[i] + allocation[j][i];
+				finish[i] = true;
+			}
+		}
+	}
+	for(int i = 0; i < NUM_CUSTOMERS; i++){
+		//printf("%d",finish[i]);
+	}
+	//printf("\n");
+	//Loop to check state of each customer. If the state of each customer is safe, then the system is safe from deadlock.
+	bool state = true;
+	for(int i = 0; i < NUM_CUSTOMERS; i++){
+		if(finish[i] == false){
+			state = false;
+		}
+	}
+	//Return the safety of the state. True is a safe state, false is a non-safe state.
+	//printf("Customer %d - Needs: %d %d %d - Allocated: %d %d %d - Available: %d %d %d - Work: %d %d %d - Request: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2], allocation[n_customer][0], allocation[n_customer][1], allocation[n_customer][2], available[0], available[1], available[2], work[0], work[1], work[2], request[0], request[1], request[2]);
+	return state;
 
 }
 
@@ -44,9 +87,6 @@ bool request_res(int n_customer, int request[])
 {
 	bool result = false, flag = true;
 	int tempAvail[NUM_RESOURCES] = {0};
-
-	
-	//printf("Customer %d request: %d %d %d - Available: %d %d %d - Need: %d %d %d\n", n_customer, request[0], request[1], request[2], available[0] ,available[1] ,available[2], need[n_customer][0], need[n_customer][1], need[n_customer][2]);
 
 	for (int i = 0; i < NUM_RESOURCES; i++){
 		if (request[i] > need[n_customer][i]){
@@ -57,23 +97,26 @@ bool request_res(int n_customer, int request[])
 			flag = false;
 			return result;
 		}
-		if( i == NUM_RESOURCES - 1){
-			printf("Flag hit\n");
-			flag = true;
-		}
 	}
 
 	if (flag == true){
 		result = true;
+		printf("Customer %d is requesting: %d %d %d\n", n_customer, request[0], request[1], request[2]);
+		sleep(1);
+		printf("tempAvail: ");
 		for (int i = 0; i < NUM_RESOURCES; i++){
 			tempAvail[i] = available[i] - request[i];
+			printf("%d ", tempAvail[i]);
 		}
+		printf("\n");
 
-		//printf("Avail: %d %d %d - Request: %d %d %d - tempAvail %d %d %d\n", available[0], available[1], available[2], request[0], request[1], request[2], tempAvail[0], tempAvail[1], tempAvail[2]);
-	
+		pthread_mutex_lock (&mutex);
 		bool safe = check_safety(n_customer, tempAvail);
+		printf("safe? %d\n", safe);
+		pthread_mutex_unlock (&mutex);
 
 		if( safe == true){
+			pthread_mutex_lock (&mutex);
 			for (int i = 0; i < NUM_RESOURCES; i++){
 				available[i] = available[i] - request[i]; // critical Section
 				allocation[n_customer][i] = allocation[n_customer][i] + request[i];
@@ -81,6 +124,7 @@ bool request_res(int n_customer, int request[])
 			}
 			result = true;
 			printf("Customer %d request: %d %d %d - Available: %d %d %d - Need: %d %d %d\n", n_customer, request[0], request[1], request[2], available[0] ,available[1] ,available[2], need[n_customer][0], need[n_customer][1], need[n_customer][2]);
+			pthread_mutex_unlock (&mutex);
 
 		} else {
 			safe = false;
@@ -89,42 +133,6 @@ bool request_res(int n_customer, int request[])
 
 	}
 
-
-/*
-	for (int i = 0; i < NUM_RESOURCES; i++){
-		if (request[i] > need[n_customer][i]){
-			result = false;
-			break;
-		} else if (request[i] > available[i]){
-			result = false;
-			break;
-		} else {
-			result = true;
-			tempAvail[i] = available[i] - request[i];
-		}
-	}
-
-	printf("Customer %d request: %d %d %d\nAvailable: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2],tempAvail[0] ,tempAvail[1] ,tempAvail[2]);
-
-
-	if (result == true){
-			bool safe = check_safety(n_customer, tempAvail);
-
-			if( safe == true){
-				for (int i = 0; i < NUM_RESOURCES; i++){
-					available[i] = available[i] - request[i]; // critical Section
-					allocation[n_customer][i] = allocation[n_customer][i] + request[i];
-					need[n_customer][i] = need[n_customer][i] - request[i];
-				}
-				result = true;
-			} else {
-				safe = false;
-				result = false;
-			}
-
-		}
-*/
-	
 	return result;
 
 }
@@ -132,9 +140,12 @@ bool request_res(int n_customer, int request[])
 // Release resources, returns true if successful
 bool release_res(int n_customer)
 {
+
 	for (int i = 0; i < NUM_RESOURCES; i++){
+		pthread_mutex_lock (&mutex);
 		available[i] = available[i] + allocation[n_customer][i];
 		allocation[n_customer][i] = 0;
+		pthread_mutex_unlock (&mutex);
  	}
 
  	return true;
@@ -148,38 +159,31 @@ void procCust(int n_customer)
 	for (int i = 0; i < 10; i++){ // Go through this song and dance 10 times
 
 		for (int j = 0; j < NUM_RESOURCES; j++){ // Generate the initial needs
-			int val = rand() % total[j];
+			int val = rand() % (total[j] + 1);
 			need[n_customer][j] = val;
 			allocation[n_customer][j] = 0;
 			maximum[n_customer][j] = val;
 		}
 
 		printf("-------------------\n");
-		printf("Customer %d Initial request: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2]);
+		printf("Customer %d Needs: %d %d %d\n", n_customer, need[n_customer][0], need[n_customer][1], need[n_customer][2]);
 
 		while(1 == 1){
 			//sleep(1);
 
 			while (1 == 1){
 				for (int j = 0; j < NUM_RESOURCES; j++){ // Start generating the requests.
-					request[j] = rand() % total[j]; // Can never request more than the max amount of resources we have
+					request[j] = rand() % (total[j] + 1); // Can never request more than the max amount of resources we have
 				}
 				if (!(request[0] == 0 && request[1] == 0 && request[2] == 0)){
 					break;
 				}
 			}
 
-
+    		//pthread_mutex_lock (&mutex);
 			bool result = request_res(n_customer, request);	
+			//pthread_mutex_unlock (&mutex);
 
-			//printf("Req: %d %d %d\n", request[0], request[1], request[2]);
-			/*
-			if(result == true){
-				//printf("Customer %d request accepted. Allocated resources: %d %d %d\n",  n_customer, request[0], request[1], request[2]);
-			} else if (result == false){
-				//printf("Customer %d request denied. Requested (but denied) resources: %d %d %d\n",  n_customer, request[0], request[1], request[2]);
-			}
-*/
 			if(need[n_customer][0] == 0 && need[n_customer][1] == 0 && need[n_customer][2] == 0){ // This is gonna drive dan crazy I can tell.
 				break;
 			}
