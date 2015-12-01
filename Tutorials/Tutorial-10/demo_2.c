@@ -138,10 +138,12 @@ int main (int argc, char* argv[])
 
     if (proc_id == MASTER)
     {
+        //Run the master process
         master(n_proc);
     }
     else
     {
+        //Run the child process
         slave(proc_id);
     }
 
